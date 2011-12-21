@@ -1,10 +1,10 @@
-include ../../makedef-$(ARCH).mak
+include ../../standard_macro.mak
 
 INCS = -I ../include -I ../../common/include
 COMMON_LIB = -L ../../lib -lcommon
 
-OBJS    = $(ODIR)/audio.o \
-          $(ODIR)/main.o
+OBJS    = $(OBJ_DIR)/audio.o \
+          $(OBJ_DIR)/main.o
 
 LIB     = ../../lib/libaudio.a
 EXE     = ../../bin/Audio.exe
@@ -13,7 +13,7 @@ all: $(OBJS) $(LIB) $(EXE)
 
 $(LIB): $(OBJS)
 	@$(ECHO) "\n================================================================================"
-	$(AR) $(LIB) $(ODIR)/audio.o 
+	$(AR) $(LIB) $(OBJ_DIR)/audio.o 
 	@$(ECHO) "\nWill store $(abspath $(LIB))"
 	@$(ECHO) "================================================================================\n"
 
@@ -24,7 +24,7 @@ $(EXE): $(OBJS)
 	@$(ECHO) "================================================================================\n"
 
 clean:
-	@$(RMDIR) $(ODIR)
+	@$(RMDIR) $(OBJ_DIR)
 	@$(RM) $(LIB)
 	@$(RM) $(EXE)
 

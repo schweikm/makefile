@@ -1,5 +1,4 @@
-# platform-specific variables
-include makedef-$(ARCH).mak
+include standard_macro.mak
 
 # directories to be built
 SUBDIRS = common audio banner launcher

@@ -1,11 +1,11 @@
-include ../../makedef-$(ARCH).mak
+include ../../standard_macro.mak
 
 INCS = -I ../include -I ../../common/include -I ../../audio/include
 COMMON_LIB = -L ../../lib -lcommon
 AUDIO_LIB  = -L ../../lib -laudio
 
-OBJS    = $(ODIR)/banner.o \
-          $(ODIR)/main.o
+OBJS    = $(OBJ_DIR)/banner.o \
+          $(OBJ_DIR)/main.o
 
 EXE     = ../../bin/Banner.exe
 
@@ -18,7 +18,7 @@ $(EXE): $(OBJS)
 	@$(ECHO) "================================================================================\n"
 
 clean:
-	@$(RMDIR) $(ODIR)
+	@$(RMDIR) $(OBJ_DIR)
 	@$(RM) $(EXE)
 
 include ../../standard_rules.mak

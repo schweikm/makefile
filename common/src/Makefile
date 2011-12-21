@@ -1,9 +1,9 @@
-include ../../makedef-$(ARCH).mak
+include ../../standard_macro.mak
 
 INCS = -I ../include
 
-OBJS    = $(ODIR)/gen_util.o \
-          $(ODIR)/math_util.o
+OBJS    = $(OBJ_DIR)/gen_util.o \
+          $(OBJ_DIR)/math_util.o
 
 LIB     = ../../lib/libcommon.a
 
@@ -16,7 +16,7 @@ $(LIB): $(OBJS)
 	@$(ECHO) "================================================================================\n"
 
 clean:
-	@$(RMDIR) $(ODIR)
+	@$(RMDIR) $(OBJ_DIR)
 	@$(RM) $(LIB)
 
 include ../../standard_rules.mak
