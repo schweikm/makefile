@@ -7,6 +7,8 @@ SYSTEM = $(shell uname)
 PROC   = $(shell uname -p)
 
 #### Set ARCH ####
+ARCH = undef
+
 ifeq ($(SYSTEM),Linux)
     ifeq ($(PROC),i686)
         ARCH = l32
@@ -25,7 +27,7 @@ endif
 ifeq ($(SYSTEM),Linux)
     CC    = /usr/bin/gcc
     CXX   = /usr/bin/g++
-    AR    = /usr/bin/ar crv
+    AR    = /usr/bin/ar
     RM    = /bin/rm -f
     RMDIR = /bin/rm -fR
     MKDIR = /bin/mkdir -p
@@ -38,21 +40,16 @@ endif
 #### COMMON MACROS ####
 #######################
 
+GCC_VER = $(shell $(CC)  --version | head -1 | cut -d ' ' -f 3)
+G++_VER = $(shell $(CXX) --version | head -1 | cut -d ' ' -f 3)
+
 OBJ_DIR = obj_$(ARCH)
+INC_DIRS = -I ../include
 
 
 ########################
 #### COMPILER FLAGS ####
 ########################
-
-#### Platform-specific flags ####
-ifeq ($(PROC),i686)
-    PLATFORM_CFLAGS = -m32
-endif
-
-ifeq ($(PROC),x86_64)
-    PLATFORM_CFLAGS = -m64
-endif
 
 #### GCC Generic flags ####
 GENERIC_CFLAGS  = -c
@@ -65,22 +62,24 @@ C++_LANG_CFLAGS =
 C_WARN_CFLAGS   = -Wall
 C++_WARN_CFLAGS = -Wall
 
-#### 
-CFLAGS     = $(PLATFORM_CFLAGS) $(GENERIC_CFLAGS) $(C_LANG_CFLAGS)   $(C_WARN_CFLAGS)
+#### Build the combined flags ####
+CFLAGS     = $(PLATFORM_CFLAGS) $(GENERIC_CFLAGS) $(C_LANG_CFLAGS) $(C_WARN_CFLAGS)
 C++FLAGS   = $(PLATFORM_CFLAGS) $(GENERIC_CFLAGS) $(C++_LANG_CFLAGS) $(C++_WARN_CFLAGS)
+
+
+########################
+#### ARCHIVER FLAGS ####
+########################
+
+ARFLAGS = crv
 
 
 ######################
 #### LINKER FLAGS ####
 ######################
 
-ifeq ($(PROC),i686)
-    PLATFORM_LFLAGS = -m32 -melf_i386
-endif
+GENERIC_LFLAGS =
 
-ifeq ($(PROC),x86_64)
-    PLATFORM_LFLAGS = -m64 -melf_x86_64
-endif
-
-LFLAGS = $(PLATFORM_LFLAGS)
+#### Build the combined flags ####
+LFLAGS = $(GENERIC_LFLAGS)
 

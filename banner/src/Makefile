@@ -1,24 +1,24 @@
 include ../../standard_macro.mak
 
-INCS = -I ../include -I ../../common/include -I ../../audio/include
-COMMON_LIB = -L ../../lib -lcommon
-AUDIO_LIB  = -L ../../lib -laudio
+# define the objects to build
+OBJS = $(OBJ_DIR)/banner.o \
+       $(OBJ_DIR)/main.o
 
-OBJS    = $(OBJ_DIR)/banner.o \
-          $(OBJ_DIR)/main.o
+# define the targets to build
+EXE = ../../bin/Banner-$(ARCH).exe
 
-EXE     = ../../bin/Banner.exe
+# module-specific options
+INC_DIRS  += -I ../../common/include -I ../../audio/include
+COMMON_LIB = -L ../../lib -lcommon-$(ARCH)
+AUDIO_LIB  = -L ../../lib -laudio-$(ARCH)
 
+# targets
 all: $(OBJS) $(EXE)
 
 $(EXE): $(OBJS)
 	@$(ECHO) "\n================================================================================"
 	$(CXX) $(LFLAGS) $(OBJS) $(AUDIO_LIB) $(COMMON_LIB) -o $(EXE)
-	@$(ECHO) "\nWill store $(abspath $(EXE))"
+	@$(ECHO) "\nWill store \"$(abspath $(EXE))\""
 	@$(ECHO) "================================================================================\n"
-
-clean:
-	@$(RMDIR) $(OBJ_DIR)
-	@$(RM) $(EXE)
 
 include ../../standard_rules.mak

@@ -1,22 +1,19 @@
 include ../../standard_macro.mak
 
-INCS = -I ../include
+# define the objects to build
+OBJS = $(OBJ_DIR)/gen_util.o \
+       $(OBJ_DIR)/math_util.o
 
-OBJS    = $(OBJ_DIR)/gen_util.o \
-          $(OBJ_DIR)/math_util.o
+# define the targets to build
+LIB = ../../lib/libcommon-$(ARCH).a
 
-LIB     = ../../lib/libcommon.a
-
+# targets
 all: $(OBJS) $(LIB)
 
 $(LIB): $(OBJS)
 	@$(ECHO) "\n================================================================================"
-	$(AR) $(LIB) $(OBJS)
-	@$(ECHO) "\nWill store $(abspath $(LIB))"
+	$(AR) $(ARFLAGS) $(LIB) $(OBJS)
+	@$(ECHO) "\nWill store \"$(abspath $(LIB))\""
 	@$(ECHO) "================================================================================\n"
-
-clean:
-	@$(RMDIR) $(OBJ_DIR)
-	@$(RM) $(LIB)
 
 include ../../standard_rules.mak
