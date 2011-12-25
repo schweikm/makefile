@@ -40,8 +40,8 @@ endif
 #### COMMON MACROS ####
 #######################
 
-GCC_VER = $(shell $(CC)  --version | head -1 | cut -d ' ' -f 3)
-G++_VER = $(shell $(CXX) --version | head -1 | cut -d ' ' -f 3)
+#GCC_VER = $(shell $(CC)  --version | head -1 | cut -d ' ' -f 3)
+#G++_VER = $(shell $(CXX) --version | head -1 | cut -d ' ' -f 3)
 
 OBJ_DIR = obj_$(ARCH)
 INC_DIRS = -I ../include
@@ -59,17 +59,17 @@ C_LANG_CFLAGS   =
 C++_LANG_CFLAGS =
 
 #### Warning flags ####
-C_WARN_CFLAGS   = -Wall
-C++_WARN_CFLAGS = -Wall
+C_WARN_CFLAGS   = -Wall -Wextra
+C++_WARN_CFLAGS = -Wall -Wextra
 
 #### Build the combined flags ####
-CFLAGS     = $(PLATFORM_CFLAGS) $(GENERIC_CFLAGS) $(C_LANG_CFLAGS) $(C_WARN_CFLAGS)
-C++FLAGS   = $(PLATFORM_CFLAGS) $(GENERIC_CFLAGS) $(C++_LANG_CFLAGS) $(C++_WARN_CFLAGS)
+CFLAGS     = $(GENERIC_CFLAGS) $(C_LANG_CFLAGS) $(C_WARN_CFLAGS)
+C++FLAGS   = $(GENERIC_CFLAGS) $(C++_LANG_CFLAGS) $(C++_WARN_CFLAGS)
 
 
-########################
-#### ARCHIVER FLAGS ####
-########################
+#######################
+#### ARCHIVE FLAGS ####
+#######################
 
 ARFLAGS = crv
 
@@ -78,7 +78,7 @@ ARFLAGS = crv
 #### LINKER FLAGS ####
 ######################
 
-GENERIC_LFLAGS =
+GENERIC_LFLAGS = -Wall -Wextra
 
 #### Build the combined flags ####
 LFLAGS = $(GENERIC_LFLAGS)

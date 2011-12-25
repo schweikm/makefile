@@ -21,7 +21,7 @@ int login(const string &username, const string &password) {
 }
 
 void annoyOperator(long numAlerts) {
-    int alerts = addInts(numAlerts, 10);
+    int alerts = addInts(numAlerts, 2);
 
     for(int i = 0; i < alerts; i++) {
         cout << "ALARM!!" << endl;
