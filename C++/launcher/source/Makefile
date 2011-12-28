@@ -1,11 +1,11 @@
-include ../../standard_macro.mak
+include ../../../standard_macro.mak
 
 # define the objects to build
-OBJS = $(OBJ_DIR)/banner.o \
+OBJS = $(OBJ_DIR)/launcher.o \
        $(OBJ_DIR)/main.o
 
 # define the targets to build
-EXE = ../../bin/Banner-$(ARCH).exe
+EXE = ../../bin/Launcher-$(ARCH).exe
 
 # module-specific options
 INC_DIRS  += -I ../../common/include -I ../../audio/include
@@ -21,4 +21,4 @@ $(EXE): $(OBJS)
 	@$(ECHO) "\nWill store \"$(abspath $(EXE))\""
 	@$(ECHO) "================================================================================\n"
 
-include ../../standard_rules.mak
+include ../../../standard_rules.mak

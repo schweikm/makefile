@@ -1,4 +1,4 @@
-include standard_macro.mak
+include ../standard_macro.mak
 
 # directories to be built
 SUB_DIRS = common audio banner launcher
@@ -7,12 +7,12 @@ SUB_DIRS = common audio banner launcher
 all:
 	@for dir in $(SUB_DIRS); do \
 		$(ECHO) "\n"; \
-		$(MAKE) -C $$dir/src all; \
+		$(MAKE) -C $$dir/source all; \
 	done
 
 clean:
 	@for dir in $(SUB_DIRS); do \
 		$(ECHO) "\n"; \
-		$(MAKE) -C $$dir/src clean; \
+		$(MAKE) -C $$dir/source clean; \
 	done
 

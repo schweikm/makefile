@@ -1,4 +1,4 @@
-include ../../standard_macro.mak
+include ../../../standard_macro.mak
 
 # define the objects to build
 OBJS = $(OBJ_DIR)/gen_util.o \
@@ -16,4 +16,4 @@ $(LIB): $(OBJS)
 	@$(ECHO) "\nWill store \"$(abspath $(LIB))\""
 	@$(ECHO) "================================================================================\n"
 
-include ../../standard_rules.mak
+include ../../../standard_rules.mak

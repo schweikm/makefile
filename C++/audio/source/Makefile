@@ -1,4 +1,4 @@
-include ../../standard_macro.mak
+include ../../../standard_macro.mak
 
 # define the objects to build
 OBJS = $(OBJ_DIR)/audio.o \
@@ -27,4 +27,4 @@ $(EXE): $(OBJS)
 	@$(ECHO) "\nWill store \"$(abspath $(EXE))\""
 	@$(ECHO) "================================================================================\n"
 
-include ../../standard_rules.mak
+include ../../../standard_rules.mak

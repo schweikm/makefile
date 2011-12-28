@@ -143,24 +143,6 @@ GENERIC_CFLAGS  = -c -ansi -pedantic -Wall -Wextra -Wabi -Wdouble-promotion -Wfo
                   -Wstack-protector
 
 
-#####################
-#### DEBUG FLAGS ####
-#####################
-
-ifeq ($(DEBUG),on)
-    GENERIC_CFLAGS += -g3
-endif
-
-
-############################
-#### OPTIMIZATION FLAGS ####
-############################
-
-ifeq ($(OPTIMIZE),on)
-    GENERIC_CFLAGS += -O3
-endif
-
-
 #### Language-specific warning flags ####
 ## -Wtraditional:  Warn about certain constructs that behave differently in traditional and ISO C
 ## -Wtraditional-conversion:  Warn if a prototype causes a type conversion that is different from what would happen
@@ -177,6 +159,7 @@ C_WARN_CFLAGS   = -Wtraditional -Wtraditional-conversion -Wdeclaration-after-sta
                   -Wold-style-definition -Wmissing-prototypes -Wnested-externs \
                   -Wunsuffixed-float-constants
 
+
 ## -Wctor-dtor-privacy:  Warn when a class seems unusable
 ## -Wnoexcept:  Warn when a noexcept-expression evaluates to false
 ## -Weffc++:  Warn about violations of the following style guidelines from Scott Meyers' Effective C++ book
@@ -187,9 +170,36 @@ C_WARN_CFLAGS   = -Wtraditional -Wtraditional-conversion -Wdeclaration-after-sta
 C++_WARN_CFLAGS = -Wctor-dtor-privacy -Wnoexcept -Weffc++ -Wstrict-null-sentinel \
                   -Wold-style-cast -Woverloaded-virtual -Wsign-promo
 
+
 #### Build the combined flags ####
 CFLAGS     = $(GENERIC_CFLAGS) $(C_WARN_CFLAGS)
 C++FLAGS   = $(GENERIC_CFLAGS) $(C++_WARN_CFLAGS)
+
+
+#####################
+#### DEBUG FLAGS ####
+#####################
+
+ifeq ($(DEBUG),on)
+    DEBUG_CFLAGS = -g3
+
+    # append to the compiler flags
+    CFLAGS   += DEBUG_CFLAGS
+    C++FLAGS += DEBUG_CFLAGS
+endif
+
+
+#######################
+#### RELEASE FLAGS ####
+#######################
+
+ifeq ($(RELEASE),on)
+    RELEASE_CFLAGS = -O3
+
+    # append to the compiler flags
+    CFLAGS   += RELEASE_CFLAGS
+    C++FLAGS += RELEASE_CFLAGS
+endif
 
 
 #######################
