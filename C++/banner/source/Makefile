@@ -17,7 +17,7 @@ all: $(OBJS) $(EXE)
 
 $(EXE): $(OBJS)
 	@$(ECHO) "\n================================================================================"
-	$(CXX) $(LFLAGS) $(OBJS) $(AUDIO_LIB) $(COMMON_LIB) -o $(EXE)
+	$(CXX) $(L++FLAGS) $(OBJS) $(AUDIO_LIB) $(COMMON_LIB) -o $(EXE)
 	@$(ECHO) "\nWill store \"$(abspath $(EXE))\""
 	@$(ECHO) "================================================================================\n"
 

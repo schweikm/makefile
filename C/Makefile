@@ -1,0 +1,18 @@
+include ../standard_macro.mak
+
+# directories to be built
+SUB_DIRS = common backend frontend
+
+# targets
+all:
+	@for dir in $(SUB_DIRS); do \
+		$(ECHO) "\n"; \
+		$(MAKE) -C $$dir/source all; \
+	done
+
+clean:
+	@for dir in $(SUB_DIRS); do \
+		$(ECHO) "\n"; \
+		$(MAKE) -C $$dir/source clean; \
+	done
+

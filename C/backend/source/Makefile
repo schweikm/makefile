@@ -1,23 +1,22 @@
 include ../../../standard_macro.mak
 
 # define the objects to build
-OBJS = $(OBJ_DIR)/launcher.o \
+OBJS = $(OBJ_DIR)/backend.o \
        $(OBJ_DIR)/main.o
 
 # define the targets to build
-EXE = ../../bin/Launcher-$(ARCH).exe
+EXE = ../../bin/Backend-$(ARCH).exe
 
 # module-specific options
-INC_DIRS  += -I ../../common/include -I ../../audio/include
+INC_DIRS  += -I ../../common/include
 COMMON_LIB = -L ../../lib -lcommon-$(ARCH)
-AUDIO_LIB  = -L ../../lib -laudio-$(ARCH)
 
 # targets
 all: $(OBJS) $(EXE)
 
 $(EXE): $(OBJS)
 	@$(ECHO) "\n================================================================================"
-	$(CXX) $(L++FLAGS) $(OBJS) $(AUDIO_LIB) $(COMMON_LIB) -o $(EXE)
+	$(CC) $(LFLAGS) $(OBJS) $(COMMON_LIB) -o $(EXE)
 	@$(ECHO) "\nWill store \"$(abspath $(EXE))\""
 	@$(ECHO) "================================================================================\n"
 

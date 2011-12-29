@@ -133,7 +133,7 @@ INC_DIRS = -I ../include
 ## -Winvalid-pch:  Warn if a precompiled header is found in the search path but can't be used
 ## -Wdisabled-optimization:  Warn if a requested optimization pass is disabled
 ## -Wstack-protector:  Warns about functions that will not be protected against stack smashing
-GENERIC_CFLAGS  = -c -ansi -pedantic -Wall -Wextra -Wabi -Wdouble-promotion -Wformat=2 \
+GENERIC_CFLAGS  = -ansi -pedantic -Wall -Wextra -Wabi -Wdouble-promotion -Wformat=2 \
                   -Winit-self -Wmissing-include-dirs -Wswitch-default -Wswitch-enum \
                   -Wunused-parameter -Wunknown-pragmas -Wtrampolines -Wfloat-equal \
                   -Wundef -Wshadow -Wunsafe-loop-optimizations  -Wcast-qual \
@@ -144,8 +144,6 @@ GENERIC_CFLAGS  = -c -ansi -pedantic -Wall -Wextra -Wabi -Wdouble-promotion -Wfo
 
 
 #### Language-specific warning flags ####
-## -Wtraditional:  Warn about certain constructs that behave differently in traditional and ISO C
-## -Wtraditional-conversion:  Warn if a prototype causes a type conversion that is different from what would happen
 ## -Wdeclaration-after-statement:  Warn when a declaration is found after a statement in a block
 ## -Wbad-function-cast:  Warn whenever a function call is cast to a non-matching type
 ## -Wc++-compat:  Warn about ISO C constructs that are outside of the common subset of ISO C and ISO C++
@@ -154,10 +152,9 @@ GENERIC_CFLAGS  = -c -ansi -pedantic -Wall -Wextra -Wabi -Wdouble-promotion -Wfo
 ## -Wmissing-prototypes:  Warn if a global function is defined without a previous prototype declaration
 ## -Wnested-externs:  Warn if an extern declaration is encountered within a function
 ## -Wunsuffixed-float-constants:  GCC will issue a warning for any floating constant that does not have a suffix
-C_WARN_CFLAGS   = -Wtraditional -Wtraditional-conversion -Wdeclaration-after-statement \
-                  -Wbad-function-cast -Wc++-compat -Wstrict-prototypes \
-                  -Wold-style-definition -Wmissing-prototypes -Wnested-externs \
-                  -Wunsuffixed-float-constants
+C_WARN_CFLAGS   = -Wdeclaration-after-statement -Wbad-function-cast -Wc++-compat \
+                  -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes \
+                  -Wnested-externs -Wunsuffixed-float-constants
 
 
 ## -Wctor-dtor-privacy:  Warn when a class seems unusable
@@ -171,21 +168,12 @@ C++_WARN_CFLAGS = -Wctor-dtor-privacy -Wnoexcept -Weffc++ -Wstrict-null-sentinel
                   -Wold-style-cast -Woverloaded-virtual -Wsign-promo
 
 
-#### Build the combined flags ####
-CFLAGS     = $(GENERIC_CFLAGS) $(C_WARN_CFLAGS)
-C++FLAGS   = $(GENERIC_CFLAGS) $(C++_WARN_CFLAGS)
-
-
 #####################
 #### DEBUG FLAGS ####
 #####################
 
 ifeq ($(DEBUG),on)
-    DEBUG_CFLAGS = -g3
-
-    # append to the compiler flags
-    CFLAGS   += DEBUG_CFLAGS
-    C++FLAGS += DEBUG_CFLAGS
+    GENERIC_CFLAGS += -g3 -ggdb3 -DDEBUG
 endif
 
 
@@ -194,12 +182,13 @@ endif
 #######################
 
 ifeq ($(RELEASE),on)
-    RELEASE_CFLAGS = -O3
-
-    # append to the compiler flags
-    CFLAGS   += RELEASE_CFLAGS
-    C++FLAGS += RELEASE_CFLAGS
+    GENERIC_CFLAGS += -O3
 endif
+
+
+#### Build the combined flags ####
+CFLAGS     = -c $(GENERIC_CFLAGS) $(C_WARN_CFLAGS)
+C++FLAGS   = -c $(GENERIC_CFLAGS) $(C++_WARN_CFLAGS)
 
 
 #######################
@@ -213,8 +202,6 @@ ARFLAGS = crv
 #### LINKER FLAGS ####
 ######################
 
-GENERIC_LFLAGS = -Wall -Wextra
-
-#### Build the combined flags ####
-LFLAGS = $(GENERIC_LFLAGS)
+LFLAGS   = $(GENERIC_CFLAGS) $(C_WARN_CFLAGS)
+L++FLAGS = $(GENERIC_CFLAGS) $(C++_WARN_CFLAGS)
 
