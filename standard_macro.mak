@@ -3,22 +3,36 @@
 ###############################
 
 #### System variables ####
-SYSTEM = $(shell uname)
-PROC   = $(shell uname -p)
+SYSTEM  = $(shell uname -s)
+MACHINE = $(shell uname -m)
 
 #### Set ARCH ####
-ARCH = undef
+SYS  = undef
+MACH = undef
 
+## Tailor system name ##
 ifeq ($(SYSTEM),Linux)
-    ifeq ($(PROC),i686)
-        ARCH = l32
-    endif
-
-    ifeq ($(PROC),x86_64)
-        ARCH = l64
-    endif
+    SYS = lin
 endif
 
+## Tailor machine name ##
+ifeq ($(MACHINE),i386)
+    MACH = 32
+endif
+
+ifeq ($(MACHINE),i686)
+    MACH = 32
+endif
+
+ifeq ($(MACHINE),amd64)
+    MACH = 64
+endif
+
+ifeq ($(MACHINE),x86_64)
+    MACH = 64
+endif
+
+ARCH = $(SYS)$(MACH)
 
 #######################
 #### SYSTEM MACROS ####
