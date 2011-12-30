@@ -15,6 +15,10 @@ ifeq ($(SYSTEM),Linux)
     SYS = lin
 endif
 
+ifeq ($(SYSTEM),Darwin)
+    SYS = mac
+endif
+
 ## Tailor machine name ##
 ifeq ($(MACHINE),i386)
     MACH = 32
@@ -37,17 +41,14 @@ ARCH = $(SYS)$(MACH)
 #######################
 #### SYSTEM MACROS ####
 #######################
-
-ifeq ($(SYSTEM),Linux)
-    CC    = /usr/bin/gcc
-    CXX   = /usr/bin/g++
-    AR    = /usr/bin/ar
-    RM    = /bin/rm -f
-    RMDIR = /bin/rm -fR
-    MKDIR = /bin/mkdir -p
-    MAKE  = /usr/bin/make
-    ECHO  = /bin/echo -e
-endif
+CC    = /usr/bin/gcc
+CXX   = /usr/bin/g++
+AR    = /usr/bin/ar
+RM    = /bin/rm -f
+RMDIR = /bin/rm -fR
+MKDIR = /bin/mkdir -p
+MAKE  = /usr/bin/make -w
+ECHO  = /bin/echo
 
 
 #######################
@@ -115,8 +116,6 @@ INC_DIRS = -I ../include
 ##           -Wunused-parameter (only with -Wunused or -Wall) 
 ##           -Wunused-but-set-parameter (only with -Wunused or -Wall)  
 ##
-## -Wabi:  Warn when G++ generates code that is probably not compatible with the vendor-neutral C++ ABI.            
-## -Wdouble-promotion:  Give a warning when a value of type float is implicitly promoted to double
 ## -Wformat=2:
 ##              -Wformat
 ##              -Wformat-nonliteral
@@ -128,7 +127,6 @@ INC_DIRS = -I ../include
 ## -Wswitch-enum:  Warn whenever a switch statement has an index of enumerated type and lacks a case for one or more of the named codes of that enumeration
 ## -Wunused-parameter:  Warn whenever a function parameter is unused aside from its declaration
 ## -Wunknown-pragmas:  Warn when a #pragma directive is encountered which is not understood by GCC
-## -Wtrampolines:  Warn about trampolines generated for pointers to nested functions
 ## -Wfloat-equal:  Warn if floating point values are used in equality comparisons
 ## -Wundef:  Warn if an undefined identifier is evaluated in an `#if' directive
 ## -Wshadow:  Warn whenever a local variable or type declaration shadows another variable, parameter, type, or class member
@@ -136,9 +134,6 @@ INC_DIRS = -I ../include
 ## -Wcast-qual:  Warn whenever a pointer is cast so as to remove a type qualifier from the target type
 ## -Wcast-align:  Warn whenever a pointer is cast such that the required alignment of the target is increased
 ## -Wconversion:  Warn for implicit conversions that may alter a value
-## -Wsign-conversion:  Warn for implicit conversions that may change the sign of an integer value
-## -Wlogical-op:  Warn about suspicious uses of logical operators in expressions
-## -Wmissing-declarations:  Warn if a global function is defined without a previous declaration
 ## -Wmissing-format-attribute:  Warn about function pointers which might be candidates for format attributes
 ## -Wpacked:  Warn if a structure is given the packed attribute, but the packed attribute has no effect on the layout or size of the structure
 ## -Wpadded:  Warn if padding is included in a structure, either to align an element of the structure or to align the whole structure
@@ -147,12 +142,12 @@ INC_DIRS = -I ../include
 ## -Winvalid-pch:  Warn if a precompiled header is found in the search path but can't be used
 ## -Wdisabled-optimization:  Warn if a requested optimization pass is disabled
 ## -Wstack-protector:  Warns about functions that will not be protected against stack smashing
-GENERIC_CFLAGS  = -ansi -pedantic -Wall -Wextra -Wabi -Wdouble-promotion -Wformat=2 \
+GENERIC_CFLAGS  = -ansi -pedantic -Wall -Wextra -Wformat=2 \
                   -Winit-self -Wmissing-include-dirs -Wswitch-default -Wswitch-enum \
-                  -Wunused-parameter -Wunknown-pragmas -Wtrampolines -Wfloat-equal \
+                  -Wunused-parameter -Wunknown-pragmas -Wfloat-equal \
                   -Wundef -Wshadow -Wunsafe-loop-optimizations  -Wcast-qual \
-                  -Wcast-align -Wconversion -Wsign-conversion -Wlogical-op \
-                  -Wmissing-declarations -Wmissing-format-attribute -Wpacked \
+                  -Wcast-align -Wconversion \
+                  -Wmissing-format-attribute -Wpacked \
                   -Wpadded -Wredundant-decls -Winline -Winvalid-pch -Wdisabled-optimization \
                   -Wstack-protector
 
@@ -200,9 +195,30 @@ ifeq ($(RELEASE),on)
 endif
 
 
+#######################
+#### PLAFORM FLAGS ####
+#######################
+
+ifeq ($(SYSTEM),Linux)
+## -Wdouble-promotion:  Give a warning when a value of type float is implicitly promoted to double
+## -Wtrampolines:  Warn about trampolines generated for pointers to nested functions
+## -Wsign-conversion:  Warn for implicit conversions that may change the sign of an integer value
+## -Wlogical-op:  Warn about suspicious uses of logical operators in expressions
+
+    PLATFORM_CFLAGS     = -Wdouble-promotion -Wtrampolines -Wsign-conversion -Wlogical-op
+    
+## -Wmissing-declarations:  Warn if a global function is defined without a previous declaration
+    PLATFORM_C_CFLAGS   = $(PLATFORM_CFLAGS) -Wmissing-declarations
+    PLATFORM_C_C++FLAGS = $(PLATFORM_CFLAGS)
+endif
+
+
 #### Build the combined flags ####
-CFLAGS     = -c $(GENERIC_CFLAGS) $(C_WARN_CFLAGS)
-C++FLAGS   = -c $(GENERIC_CFLAGS) $(C++_WARN_CFLAGS)
+BASE_CFLAGS   = $(GENERIC_CFLAGS) $(C_WARN_FLAGS) $(PLATFORM_CFLAGS)
+BASE_C++FLAGS = $(GENERIC_CFLAGS) $(C++_WARN_FLAGS) $(PLATFORM_C++FLAGS)
+
+CFLAGS   = -c $(BASE_CFLAGS)
+C++FLAGS = -c $(BASE_C++FLAGS)
 
 
 #######################
@@ -216,6 +232,6 @@ ARFLAGS = crv
 #### LINKER FLAGS ####
 ######################
 
-LFLAGS   = $(GENERIC_CFLAGS) $(C_WARN_CFLAGS)
-L++FLAGS = $(GENERIC_CFLAGS) $(C++_WARN_CFLAGS)
+LFLAGS   = $(BASE_CFLAGS)
+L++FLAGS = $(BASE_C++FLAGS)
 

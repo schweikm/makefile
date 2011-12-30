@@ -6,13 +6,13 @@ SUB_DIRS = C C++ mixed
 # targets
 all:
 	@for dir in $(SUB_DIRS); do \
-		$(ECHO) "\n"; \
+		$(ECHO) ; \
 		$(MAKE) -C $$dir all; \
 	done
 
 clean:
 	@for dir in $(SUB_DIRS); do \
-		$(ECHO) "\n"; \
+		$(ECHO) ; \
 		$(MAKE) -C $$dir clean; \
 	done
 
