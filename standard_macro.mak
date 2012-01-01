@@ -54,12 +54,19 @@ ECHO  = /bin/echo
 #######################
 #### COMMON MACROS ####
 #######################
-
-#GCC_VER = $(shell $(CC)  --version | head -1 | cut -d ' ' -f 3)
-#G++_VER = $(shell $(CXX) --version | head -1 | cut -d ' ' -f 3)
-
 OBJ_DIR = obj_$(ARCH)
 INC_DIRS = -I ../include
+
+GCC_VER = $(shell $(CC)  --version | head -1 | cut -d ' ' -f 3)
+OLD_GCC = undef
+
+ifeq ($(SYSTEM),Linux)
+    OLD_GCC = 4.6.2
+endif
+
+ifeq ($(SYSTEM),Darwin)
+    OLD_GCC = 4.2.1
+endif
 
 
 ########################
@@ -199,19 +206,21 @@ endif
 #### PLAFORM FLAGS ####
 #######################
 
-ifeq ($(SYSTEM),Linux)
-## -Wdouble-promotion:  Give a warning when a value of type float is implicitly promoted to double
-## -Wtrampolines:  Warn about trampolines generated for pointers to nested functions
-## -Wsign-conversion:  Warn for implicit conversions that may change the sign of an integer value
-## -Wlogical-op:  Warn about suspicious uses of logical operators in expressions
-
-    PLATFORM_CFLAGS     = -Wdouble-promotion -Wtrampolines -Wsign-conversion -Wlogical-op
-    
-## -Wmissing-declarations:  Warn if a global function is defined without a previous declaration
-    PLATFORM_C_CFLAGS   = $(PLATFORM_CFLAGS) -Wmissing-declarations
-    PLATFORM_C_C++FLAGS = $(PLATFORM_CFLAGS)
+ifneq ($(SYSTEM),Darwin)
+    ## -Wdouble-promotion:  Give a warning when a value of type float is implicitly promoted to double
+    ## -Wtrampolines:  Warn about trampolines generated for pointers to nested functions
+    ## -Wsign-conversion:  Warn for implicit conversions that may change the sign of an integer value
+    ## -Wlogical-op:  Warn about suspicious uses of logical operators in expressions
+    PLATFORM_CFLAGS += -Wdouble-promotion -Wtrampolines -Wsign-conversion -Wlogical-op
 endif
 
+PLATFORM_C_CFLAGS   = $(PLATFORM_CFLAGS)
+PLATFORM_C_C++FLAGS = $(PLATFORM_CFLAGS)
+
+ifneq ($(SYSTEM),Darwin)
+    ## -Wmissing-declarations:  Warn if a global function is defined without a previous declaration
+    PLATFORM_C_CFLAGS   += -Wmissing-declarations
+endif
 
 #### Build the combined flags ####
 BASE_CFLAGS   = $(GENERIC_CFLAGS) $(C_WARN_FLAGS) $(PLATFORM_C_CFLAGS)
