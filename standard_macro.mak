@@ -19,12 +19,20 @@ ifeq ($(SYSTEM),Darwin)
     SYS = mac
 endif
 
+ifeq ($(SYSTEM),SunOS)
+    SYS = sun
+endif
+
 ## Tailor machine name ##
 ifeq ($(MACHINE),i386)
     MACH = 32
 endif
 
 ifeq ($(MACHINE),i686)
+    MACH = 32
+endif
+
+ifeq ($(MACHINE),i86pc)
     MACH = 32
 endif
 
@@ -51,6 +59,11 @@ MAKE  = /usr/bin/make -w
 ECHO  = /bin/echo
 
 
+ifeq ($(SYSTEM),SunOS)
+    MAKE = /usr/gnu/bin/make -w
+endif
+
+
 #######################
 #### COMMON MACROS ####
 #######################
@@ -66,6 +79,10 @@ endif
 
 ifeq ($(SYSTEM),Darwin)
     OLD_GCC = 4.2.1
+endif
+
+ifeq ($(SYSTEM),SunOS)
+    OLD_GCC = 4.5.2
 endif
 
 
@@ -207,11 +224,15 @@ endif
 #######################
 
 ifneq ($(SYSTEM),Darwin)
-    ## -Wdouble-promotion:  Give a warning when a value of type float is implicitly promoted to double
-    ## -Wtrampolines:  Warn about trampolines generated for pointers to nested functions
     ## -Wsign-conversion:  Warn for implicit conversions that may change the sign of an integer value
     ## -Wlogical-op:  Warn about suspicious uses of logical operators in expressions
-    PLATFORM_CFLAGS += -Wdouble-promotion -Wtrampolines -Wsign-conversion -Wlogical-op
+    PLATFORM_CFLAGS += -Wsign-conversion -Wlogical-op
+endif
+
+ifeq ($(SYSTEM),Linux)
+    ## -Wdouble-promotion:  Give a warning when a value of type float is implicitly promoted to double
+    ## -Wtrampolines:  Warn about trampolines generated for pointers to nested functions
+    PLATFORM_CFLAGS += -Wdouble-promotion -Wtrampolines
 endif
 
 PLATFORM_C_CFLAGS   = $(PLATFORM_CFLAGS)
