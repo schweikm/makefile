@@ -46,6 +46,7 @@ endif
 
 ARCH = $(SYS)$(MACH)
 
+
 #######################
 #### SYSTEM MACROS ####
 #######################
@@ -56,7 +57,7 @@ RM    = /bin/rm -f
 RMDIR = /bin/rm -fR
 MKDIR = /bin/mkdir -p
 MAKE  = /usr/bin/make -w
-ECHO  = /bin/echo
+ECHO  = /bin/echo -e
 
 
 ifeq ($(SYSTEM),SunOS)
@@ -67,23 +68,9 @@ endif
 #######################
 #### COMMON MACROS ####
 #######################
-OBJ_DIR = obj_$(ARCH)
-INC_DIRS = -I ../include
-
-GCC_VER = $(shell $(CC)  --version | head -1 | cut -d ' ' -f 3)
-OLD_GCC = undef
-
-ifeq ($(SYSTEM),Linux)
-    OLD_GCC = 4.6.2
-endif
-
-ifeq ($(SYSTEM),Darwin)
-    OLD_GCC = 4.2.1
-endif
-
-ifeq ($(SYSTEM),SunOS)
-    OLD_GCC = 4.5.2
-endif
+OBJ_DIR    = obj_$(ARCH)
+INC_DIRS   = -I . -I ..
+INCLUDE_DIR= ../include
 
 
 ########################
@@ -96,49 +83,50 @@ endif
 ## -pedantic:  Issue all the warnings demanded by strict ISO C and ISO C++
 ##
 ## -Wall:
-##         -Waddress   
-##         -Warray-bounds (only with -O2)  
-##         -Wc++0x-compat  
-##         -Wchar-subscripts  
-##         -Wenum-compare (in C/Objc; this is on by default in C++) 
-##         -Wimplicit-int (C and Objective-C only) 
-##         -Wimplicit-function-declaration (C and Objective-C only) 
-##         -Wcomment  
-##         -Wformat   
-##         -Wmain (only for C/ObjC and unless -ffreestanding)  
-##         -Wmissing-braces  
-##         -Wnonnull  
-##         -Wparentheses  
-##         -Wpointer-sign  
-##         -Wreorder   
-##         -Wreturn-type  
-##         -Wsequence-point  
-##         -Wsign-compare (only in C++)  
-##         -Wstrict-aliasing  
-##         -Wstrict-overflow=1  
-##         -Wswitch  
-##         -Wtrigraphs  
-##         -Wuninitialized  
-##         -Wunknown-pragmas  
-##         -Wunused-function  
-##         -Wunused-label     
-##         -Wunused-value     
-##         -Wunused-variable  
-##         -Wvolatile-register-var 
+##         -Waddress                                                   (since 4.2)
+##         -Warray-bounds (only with -O2)                              (since 4.3)
+##         -Wc++0x-compat
+##         -Wchar-subscripts
+##         -Wenum-compare (in C/Objc; this is on by default in C++)
+##         -Wimplicit-int (C and Objective-C only)
+##         -Wimplicit-function-declaration (C and Objective-C only)
+##         -Wcomment
+##         -Wformat
+##         -Wmain (only for C/ObjC and unless -ffreestanding)
+##         -Wmaybe-uninitialized                                       (since 4.7)
+##         -Wmissing-braces
+##         -Wnonnull
+##         -Wparentheses
+##         -Wpointer-sign
+##         -Wreorder
+##         -Wreturn-type
+##         -Wsequence-point
+##         -Wsign-compare (only in C++)
+##         -Wstrict-aliasing                                           (since 4.0)
+##         -Wstrict-overflow=1
+##         -Wswitch
+##         -Wtrigraphs
+##         -Wuninitialized
+##         -Wunknown-pragmas
+##         -Wunused-function
+##         -Wunused-label
+##         -Wunused-value
+##         -Wunused-variable
+##         -Wvolatile-register-var
 ##
 ## -Wextra:
-##           -Wclobbered  
-##           -Wempty-body  
-##           -Wignored-qualifiers 
-##           -Wmissing-field-initializers  
-##           -Wmissing-parameter-type (C only)  
-##           -Wold-style-declaration (C only)  
-##           -Woverride-init  
-##           -Wsign-compare  
-##           -Wtype-limits  
-##           -Wuninitialized  
-##           -Wunused-parameter (only with -Wunused or -Wall) 
-##           -Wunused-but-set-parameter (only with -Wunused or -Wall)  
+##           -Wclobbered
+##           -Wempty-body
+##           -Wignored-qualifiers
+##           -Wmissing-field-initializers
+##           -Wmissing-parameter-type (C only)
+##           -Wold-style-declaration (C only)
+##           -Woverride-init
+##           -Wsign-compare
+##           -Wtype-limits
+##           -Wuninitialized
+##           -Wunused-parameter (only with -Wunused or -Wall)
+##           -Wunused-but-set-parameter (only with -Wunused or -Wall)
 ##
 ## -Wformat=2:
 ##              -Wformat
@@ -159,21 +147,23 @@ endif
 ## -Wcast-align:  Warn whenever a pointer is cast such that the required alignment of the target is increased
 ## -Wconversion:  Warn for implicit conversions that may alter a value
 ## -Wmissing-format-attribute:  Warn about function pointers which might be candidates for format attributes
-## -Wpacked:  Warn if a structure is given the packed attribute, but the packed attribute has no effect on the layout or size of the structure
-## -Wpadded:  Warn if padding is included in a structure, either to align an element of the structure or to align the whole structure
 ## -Wredundant-decls:  Warn if anything is declared more than once in the same scope
 ## -Winline:  Warn if a function can not be inlined and it was declared as inline
 ## -Winvalid-pch:  Warn if a precompiled header is found in the search path but can't be used
 ## -Wdisabled-optimization:  Warn if a requested optimization pass is disabled
 ## -Wstack-protector:  Warns about functions that will not be protected against stack smashing
-GENERIC_CFLAGS  = -ansi -pedantic -Wall -Wextra -Wformat=2 \
-                  -Winit-self -Wmissing-include-dirs -Wswitch-default -Wswitch-enum \
-                  -Wunused-parameter -Wunknown-pragmas -Wfloat-equal \
-                  -Wundef -Wshadow -Wunsafe-loop-optimizations  -Wcast-qual \
-                  -Wcast-align -Wconversion \
-                  -Wmissing-format-attribute -Wpacked \
-                  -Wpadded -Wredundant-decls -Winline -Winvalid-pch -Wdisabled-optimization \
-                  -Wstack-protector
+## -Wdouble-promotion:  Give a warning when a value of type float is implicitly promoted to double (since 4.6)
+## -Wsign-conversion:  Warn for implicit conversions that may change the sign of an integer value
+## -Wlogical-op:  Warn about suspicious uses of logical operators in expressions
+## -Wtrampolines:  Warn about trampolines generated for pointers to nested functions
+## -Wunused-local-typedefs:  This warning diagnoses typedefs locally defined in a function, and otherwise not used. (since 4.7)
+## -Wmissing-declarations:  Warn if a global function is defined without a previous declaration
+GENERIC_CFLAGS  = -ansi -pedantic -Wall -Wextra -Wformat=2 -Winit-self -Wmissing-include-dirs -Wswitch-default \
+                  -Wswitch-enum -Wunused-parameter -Wunknown-pragmas -Wfloat-equal -Wundef -Wshadow \
+                  -Wunsafe-loop-optimizations -Wcast-qual -Wcast-align -Wconversion -Wmissing-format-attribute \
+                  -Wredundant-decls -Winline -Winvalid-pch -Wdisabled-optimization \
+                  -Wstack-protector -Wdouble-promotion -Wsign-conversion -Wlogical-op -Wtrampolines \
+                  -Wunused-local-typedefs -Wmissing-declarations
 
 
 #### Language-specific warning flags ####
@@ -197,14 +187,22 @@ C_WARN_CFLAGS   = -Wdeclaration-after-statement -Wbad-function-cast -Wc++-compat
 ## -Wold-style-cast:  Warn if an old-style (C-style) cast to a non-void type is used within a C++ program
 ## -Woverloaded-virtual:  Warn when a function declaration hides virtual functions from a base class
 ## -Wsign-promo:  Warn when overload resolution chooses a promotion from unsigned or enumerated type to a signed type
-C++_WARN_CFLAGS = -Wctor-dtor-privacy -Wnoexcept -Weffc++ -Wstrict-null-sentinel \
-                  -Wold-style-cast -Woverloaded-virtual -Wsign-promo
+## -fno-exceptions:  Disable exceptions
+## -fno-rtti:  Disable Run-time Type Information
+CXX_WARN_CFLAGS = -Wctor-dtor-privacy -Wnoexcept -Weffc++ -Wstrict-null-sentinel -Wold-style-cast \
+                  -Woverloaded-virtual -Wsign-promo -fno-exceptions -fno-rtti
+
+
+#######################
+#### DEFINE MACROS ####
+#######################
+C_DEFINES =
+CXX_DEFINES = -DBOOST_NO_RTTI -DBOOST_NO_TYPEID -DBOOST_EXCEPTION_DISABLE -DBOOST_NO_EXCEPTIONS
 
 
 #####################
 #### DEBUG FLAGS ####
 #####################
-
 ifeq ($(DEBUG),on)
     GENERIC_CFLAGS += -g3 -ggdb3 -DDEBUG
 endif
@@ -213,55 +211,51 @@ endif
 #######################
 #### RELEASE FLAGS ####
 #######################
-
 ifeq ($(RELEASE),on)
     GENERIC_CFLAGS += -O3
 endif
 
 
 #######################
+#### PROFILE FLAGS ####
+#######################
+ifeq ($(PROFILE),on)
+    GENERIC_CFLAGS += -pg
+endif
+
+
+########################
+#### COVERAGE FLAGS ####
+########################
+ifeq ($(COVERAGE),on)
+    GENERIC_CFLAGS += -fprofile-arcs -ftest-coverage
+endif
+
+
+#######################
 #### PLAFORM FLAGS ####
 #######################
-
-ifneq ($(SYSTEM),Darwin)
-    ## -Wsign-conversion:  Warn for implicit conversions that may change the sign of an integer value
-    ## -Wlogical-op:  Warn about suspicious uses of logical operators in expressions
-    PLATFORM_CFLAGS += -Wsign-conversion -Wlogical-op
-endif
-
-ifeq ($(SYSTEM),Linux)
-    ## -Wdouble-promotion:  Give a warning when a value of type float is implicitly promoted to double
-    ## -Wtrampolines:  Warn about trampolines generated for pointers to nested functions
-    PLATFORM_CFLAGS += -Wdouble-promotion -Wtrampolines
-endif
-
+PLATFORM_CFLAGS     = # unused right now
 PLATFORM_C_CFLAGS   = $(PLATFORM_CFLAGS)
-PLATFORM_C_C++FLAGS = $(PLATFORM_CFLAGS)
-
-ifneq ($(SYSTEM),Darwin)
-    ## -Wmissing-declarations:  Warn if a global function is defined without a previous declaration
-    PLATFORM_C_CFLAGS   += -Wmissing-declarations
-endif
+PLATFORM_C_CXXFLAGS = $(PLATFORM_CFLAGS)
 
 #### Build the combined flags ####
-BASE_CFLAGS   = $(GENERIC_CFLAGS) $(C_WARN_FLAGS) $(PLATFORM_C_CFLAGS)
-BASE_C++FLAGS = $(GENERIC_CFLAGS) $(C++_WARN_FLAGS) $(PLATFORM_C_C++FLAGS)
+BASE_CFLAGS   = $(GENERIC_CFLAGS) $(C_WARN_CFLAGS) $(C_DEFINES) $(PLATFORM_C_CFLAGS)
+BASE_CXXFLAGS = $(GENERIC_CFLAGS) $(CXX_WARN_CFLAGS) $(CXX_DEFINES) $(PLATFORM_C_CXXFLAGS)
 
 CFLAGS   = -c $(BASE_CFLAGS)
-C++FLAGS = -c $(BASE_C++FLAGS)
+CXXFLAGS = -c $(BASE_CXXFLAGS)
 
 
 #######################
 #### ARCHIVE FLAGS ####
 #######################
-
 ARFLAGS = crv
 
 
 ######################
 #### LINKER FLAGS ####
 ######################
-
 LFLAGS   = $(BASE_CFLAGS)
-L++FLAGS = $(BASE_C++FLAGS)
+LXXFLAGS = $(BASE_CXXFLAGS)
 
